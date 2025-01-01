@@ -37,7 +37,7 @@ pipeline {
             }
         }
         stage('Deploy to TEST') {
-        when { not { branch "main" } }
+            when { not { branch "main" } }
 
             steps {
                 sh """
