@@ -48,6 +48,16 @@ pipeline {
                     oc set image deployment ${DEPLOYMENT_STAGE} home-automation home-automation=quay.io/${QUAY_USR}/do400-deploying-lab:build-${BUILD_NUMBER} -n jenkins --record
                 """
             }
-        }    
+        }
+        stage('Deploy to PROD') {
+            when { not { branch "main" } }
+
+            steps {
+                sh """
+                    oc project jenkins
+                    oc set image deployment ${DEPLOYMENT_PRODUCTION} home-automation home-automation=quay.io/${QUAY_USR}/do400-deploying-lab:build-${BUILD_NUMBER} -n jenkins --record
+                """
+            }
+        }     
     }
 }
