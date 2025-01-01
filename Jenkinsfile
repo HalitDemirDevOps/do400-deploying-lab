@@ -1,17 +1,20 @@
 pipeline {
     agent {
-        node { label: "maven" }
+        node { label "maven" }
     }
-
     environment { QUAY = credentials('QUAY_USER') }
 
     stages {
-        ...output omitted...
-
+        stage("Test") {
+            steps {
+                sh "./mvnw verify"
+            }
+        }
         stage("Build & Push Image") {
             steps {
                 sh '''
-                    ./mvnw quarkus:add-extension -Dextensions="container-image-jib"
+                    ./mvnw quarkus:add-extension \
+                    -Dextensions="container-image-jib"
                 '''
                 sh '''
                     ./mvnw package -DskipTests \
