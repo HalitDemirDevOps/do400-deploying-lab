@@ -8,19 +8,19 @@ objects:
   - kind: Deployment
     apiVersion: apps/v1
     metadata:
-      name: home-automation
+      name: home-automation-${APP_ENVIRONMENT}
     spec:
       selector:
         matchLabels:
-          app: home-automation
+          app: home-automation-${APP_ENVIRONMENT}
       replicas: 1
       template:
         metadata:
           labels:
-            app: home-automation
+            app: home-automation-${APP_ENVIRONMENT}
         spec:
           containers:
-            - name: home-automation
+            - name: home-automation-${APP_ENVIRONMENT}
               image: quay.io/${QUAY_USER_OR_GROUP}/${APP_IMAGE_NAME}:${APP_IMAGE_TAG}
               imagePullPolicy: Always
               ports:
@@ -31,25 +31,25 @@ objects:
     apiVersion: v1
     metadata:
       labels:
-        app: home-automation
-      name: home-automation
+        app: home-automation-${APP_ENVIRONMENT}
+      name: home-automation-${APP_ENVIRONMENT}
     spec:
       ports:
         - port: 8080
           protocol: TCP
           targetPort: 8080
       selector:
-        app: home-automation
+        app: home-automation-${APP_ENVIRONMENT}
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
-      name: home-automation
+      name: home-automation-${APP_ENVIRONMENT}
       labels:
-        app: home-automation
+        app: home-automation-${APP_ENVIRONMENT}
     spec:
       to:
         kind: Service
-        name: home-automation
+        name: home-automation-${APP_ENVIRONMENT}
       port:
         targetPort: 8080
 
@@ -57,6 +57,10 @@ parameters:
   - name: QUAY_USER_OR_GROUP
     description: "Quay User/Group"
     required: true
+  - name: APP_ENVIRONMENT
+    description: "Application environment"
+    required: false
+    value: "stage"
   - name: APP_IMAGE_NAME
     description: "Image Name"
     required: false
