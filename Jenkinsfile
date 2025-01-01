@@ -50,7 +50,7 @@ pipeline {
             }
         }
         stage('Deploy to PROD') {
-            when { { branch "main" } }
+            when { branch "main" }
 
             steps {
                 sh """
