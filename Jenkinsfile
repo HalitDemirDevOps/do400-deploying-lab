@@ -2,7 +2,12 @@ pipeline {
     agent {
         node { label "maven" }
     }
-    environment { QUAY = credentials('QUAY_USER') }
+    environment { 
+        QUAY = credentials('QUAY_USER') 
+        OPENSHIFT_SERVER = "https://api.eu46r.prod.ole.redhat.com:6443/"
+        OPENSHIFT_TOKEN = credentials('Openshift-jenkins-account')
+        RHT_OCP4_DEV_USER = 'jenkins'
+    }
 
     stages {
         stage("Test") {
@@ -31,5 +36,16 @@ pipeline {
                 '''
             }
         }
+        stage('Deploy to TEST') {
+        when { not { branch "main" } }
+
+            steps {
+                sh """
+                    oc login --token=${OPENSHIFT_TOKEN} --server=${OPENSHIFT_SERVER}
+                    oc project jenkins
+                    oc set image deployment home-automation home-automation=quay.io/${QUAY_USR}/do400-deploying-lab:build-${BUILD_NUMBER} -n jenkins --record
+                """
+            }
+        }    
     }
 }
