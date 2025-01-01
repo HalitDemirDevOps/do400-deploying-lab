@@ -7,6 +7,8 @@ pipeline {
         OPENSHIFT_SERVER = "https://api.eu46r.prod.ole.redhat.com:6443/"
         OPENSHIFT_TOKEN = credentials('Openshift-jenkins-account')
         RHT_OCP4_DEV_USER = 'jenkins'
+        DEPLOYMENT_STAGE = 'home-automation-stage'
+        DEPLOYMENT_PRODUCTION = 'home-automation-production'
     }
 
     stages {
@@ -43,7 +45,7 @@ pipeline {
                 sh """
                     oc login --token=${OPENSHIFT_TOKEN} --server=${OPENSHIFT_SERVER}
                     oc project jenkins
-                    oc set image deployment home-automation home-automation=quay.io/${QUAY_USR}/do400-deploying-lab:build-${BUILD_NUMBER} -n jenkins --record
+                    oc set image deployment ${DEPLOYMENT_STAGE} home-automation home-automation=quay.io/${QUAY_USR}/do400-deploying-lab:build-${BUILD_NUMBER} -n jenkins --record
                 """
             }
         }    
