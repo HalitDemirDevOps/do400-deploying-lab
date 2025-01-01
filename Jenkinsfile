@@ -54,6 +54,7 @@ pipeline {
 
             steps {
                 sh """
+                    oc login --token=${OPENSHIFT_TOKEN} --server=${OPENSHIFT_SERVER}
                     oc project jenkins
                     oc set image deployment ${DEPLOYMENT_PRODUCTION} home-automation home-automation-production=quay.io/${QUAY_USR}/do400-deploying-lab:build-${BUILD_NUMBER} -n jenkins --record
                 """
